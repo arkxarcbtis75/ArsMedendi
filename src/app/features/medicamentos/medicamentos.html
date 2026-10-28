@@ -1,0 +1,90 @@
+<div class="container my-4">
+  <h2>💊 Registro de Medicamentos</h2>
+  <p>Agrega los medicamentos que necesitas tomar para programar tus alertas.</p>
+
+  <form [formGroup]="miFormulario" (ngSubmit)="guardarMedicamento()" class="card p-3 mb-4">
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Nombre del medicamento *</label>
+        <input
+          type="text"
+          formControlName="nombre"
+          class="form-control"
+          placeholder="Ej. Paracetamol"
+        />
+        @if (miFormulario.get('nombre')?.touched && miFormulario.get('nombre')?.invalid) {
+          <small class="text-danger">El nombre es obligatorio.</small>
+        }
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">Dosis *</label>
+        <input
+          type="text"
+          formControlName="dosis"
+          class="form-control"
+          placeholder="Ej. 500 mg / 1 tableta"
+        />
+        @if (miFormulario.get('dosis')?.touched && miFormulario.get('dosis')?.invalid) {
+          <small class="text-danger">La dosis es obligatoria.</small>
+        }
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">Frecuencia (cada cuántas horas) *</label>
+        <input type="number" formControlName="frecuenciaHoras" class="form-control" min="1" />
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">Duración del tratamiento (días) *</label>
+        <input type="number" formControlName="duracionDias" class="form-control" min="1" />
+      </div>
+
+      <div class="col-12">
+        <label class="form-label">Instrucciones adicionales (Opcional)</label>
+        <textarea
+          formControlName="instrucciones"
+          class="form-control"
+          rows="2"
+          placeholder="Ej. Tomar con abundante agua después de los alimentos"
+        ></textarea>
+      </div>
+
+      <div class="col-12">
+        <button type="submit" class="btn btn-primary">Registrar Medicamento</button>
+      </div>
+    </div>
+  </form>
+
+  <hr />
+
+  <h3>Mis Medicamentos Activos</h3>
+
+  @if (medicamentoService.medicamentos().length === 0) {
+    <div class="alert alert-info">Aún no has registrado ningún medicamento.</div>
+  } @else {
+    <div class="row g-3">
+      @for (item of medicamentoService.medicamentos(); track item.id) {
+        <div class="col-md-4">
+          <div class="card h-100">
+            <div class="card-body">
+              <h5 class="card-title text-primary">{{ item.nombre }}</h5>
+              <h6 class="card-subtitle mb-2 text-muted">Dosis: {{ item.dosis }}</h6>
+              <p class="card-text mb-1">
+                <strong>Frecuencia:</strong> Cada {{ item.frecuenciaHoras }} horas<br />
+                <strong>Duración:</strong> {{ item.duracionDias }} días
+              </p>
+              @if (item.instrucciones) {
+                <p class="card-text text-secondary">
+                  <small
+                    ><em>"{{ item.instrucciones }}"</em></small
+                  >
+                </p>
+              }
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>
