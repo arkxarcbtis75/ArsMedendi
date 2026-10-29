@@ -18,21 +18,37 @@
       <ul class="navbar-nav ms-auto gap-1">
         <li class="nav-item">
           <a
-            class="nav-link d-flex align-items-center gap-2 px-3 rounded"
+            class="nav-link px-3"
             routerLink="/"
             routerLinkActive="active"
             [routerLinkActiveOptions]="{ exact: true }"
           >
-            <i class="bi bi-clock-history"></i> Recordatorios
+            <i class="bi bi-clock-history me-1"></i> Recordatorios
           </a>
         </li>
         <li class="nav-item">
-          <a
-            class="nav-link d-flex align-items-center gap-2 px-3 rounded"
-            routerLink="/medicamentos"
-            routerLinkActive="active"
-          >
-            <i class="bi bi-capsule"></i> Mis Medicamentos
+          <a class="nav-link px-3" routerLink="/medicamentos" routerLinkActive="active">
+            <i class="bi bi-capsule me-1"></i> Medicamentos
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link px-3" routerLink="/habitos" routerLinkActive="active">
+            <i class="bi bi-activity me-1"></i> Hábitos
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link px-3" routerLink="/buscador" routerLinkActive="active">
+            <i class="bi bi-search me-1"></i> Buscador
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link px-3" routerLink="/mapa" routerLinkActive="active">
+            <i class="bi bi-geo-alt me-1"></i> Mapa
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link px-3" routerLink="/perfil" routerLinkActive="active">
+            <i class="bi bi-person me-1"></i> Perfil
           </a>
         </li>
       </ul>

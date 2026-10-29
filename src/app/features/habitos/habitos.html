@@ -1,0 +1,69 @@
+<div class="container my-4">
+  <h2 class="fw-bold mb-1"><i class="bi bi-heart-pulse text-danger me-2"></i>Hábitos Saludables</h2>
+  <p class="text-muted">Lleva el registro diario de tus hábitos básicos de salud.</p>
+
+  <div class="row g-4 mt-1">
+    <!-- AGUA -->
+    <div class="col-md-4">
+      <div class="card card-custom p-3 text-center h-100">
+        <i class="bi bi-droplet-fill text-primary display-4 mb-2"></i>
+        <h5 class="fw-bold">Agua Consumida</h5>
+        <h2 class="my-2 fw-bold text-primary">
+          {{ habitoService.habitoHoy().vasosAgua }} <small class="fs-6 text-muted">vasos</small>
+        </h2>
+        <div class="d-flex justify-content-center gap-2 mt-3">
+          <button class="btn btn-outline-danger" (click)="habitoService.actualizarAgua(-1)">
+            -1
+          </button>
+          <button class="btn btn-primary" (click)="habitoService.actualizarAgua(1)">+1 Vaso</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUEÑO -->
+    <div class="col-md-4">
+      <div class="card card-custom p-3 text-center h-100">
+        <i class="bi bi-moon-stars-fill text-warning display-4 mb-2"></i>
+        <h5 class="fw-bold">Horas de Sueño</h5>
+        <h2 class="my-2 fw-bold text-warning">
+          {{ habitoService.habitoHoy().horasSueno }} <small class="fs-6 text-muted">hrs</small>
+        </h2>
+        <div class="mt-3">
+          <input
+            type="range"
+            class="form-range"
+            min="3"
+            max="12"
+            [ngModel]="habitoService.habitoHoy().horasSueno"
+            (ngModelChange)="habitoService.actualizarSueno($event)"
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- EJERCICIO -->
+    <div class="col-md-4">
+      <div class="card card-custom p-3 text-center h-100">
+        <i class="bi bi-activity text-success display-4 mb-2"></i>
+        <h5 class="fw-bold">Actividad Física</h5>
+        <h2 class="my-2 fw-bold text-success">
+          {{ habitoService.habitoHoy().minutosEjercicio }}
+          <small class="fs-6 text-muted">min</small>
+        </h2>
+        <div class="d-flex justify-content-center gap-2 mt-3">
+          <button
+            class="btn btn-outline-success"
+            (click)="
+              habitoService.actualizarEjercicio(habitoService.habitoHoy().minutosEjercicio + 15)
+            "
+          >
+            +15 min
+          </button>
+          <button class="btn btn-outline-secondary" (click)="habitoService.actualizarEjercicio(0)">
+            Reiniciar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
