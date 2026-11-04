@@ -3,8 +3,10 @@ export interface Medicamento {
   nombre: string;
   dosis: string;
   frecuenciaHoras: number;
-  fechaInicio: string;
-  fechaFin?: string;
   duracionDias: number;
+  fechaInicio: string;
   instrucciones?: string;
+  sustanciaActiva?: string;
+  advertenciaFda?: string;
+  viaAdministracion?: string;
 }
