@@ -1,186 +1,175 @@
 <div class="container my-4">
   <div class="mb-4">
-    <h2 class="fw-bold text-dark mb-1">
+    <h2 class="fw-bold mb-1 text-dark">
       <i class="bi bi-capsule text-primary me-2"></i>Registro Inteligente de Medicamentos
     </h2>
-    <p class="text-muted">
-      Conectado con la base de datos médica openFDA para autocompletar advertencias y sustancias
-      activas.
-    </p>
+    <p class="text-muted mb-0">Conectado con la base de datos médica openFDA para autocompletar advertencias y sustancias activas.</p>
   </div>
 
   <div class="row g-4">
-    <!-- COLUMNA IZQUIERDA: FORMULARIO -->
-    <div class="col-lg-5">
+    <!-- FORMULARIO DE REGISTRO -->
+    <div class="col-12 col-lg-5">
       <div class="card card-custom p-4">
-        <h4 class="fw-bold mb-3 text-primary">
+        <h4 class="fw-bold text-primary mb-3">
           <i class="bi bi-plus-circle me-2"></i>Nuevo Tratamiento
         </h4>
 
         <form [formGroup]="miFormulario" (ngSubmit)="guardarMedicamento()">
-          <!-- Nombre del medicamento con Autocompletado de API -->
+          <!-- CAMPO NOMBRE CON BUSCADOR Y DESPLEGABLE -->
           <div class="mb-3 position-relative">
-            <label class="form-label fw-medium">Nombre del medicamento *</label>
-            <div class="input-group">
-              <input
-                type="text"
-                formControlName="nombre"
-                class="form-control"
-                placeholder="Ej. Paracetamol, Ibuprofen, Salbutamol"
-                (input)="onBuscarApi()"
-              />
-              @if (buscandoApi()) {
-                <span class="input-group-text bg-white">
-                  <span class="spinner-border spinner-border-sm text-primary"></span>
-                </span>
-              }
-            </div>
+            <label class="form-label fw-bold">Nombre del medicamento *</label>
+            <input 
+              type="text" 
+              class="form-control" 
+              formControlName="nombre" 
+              placeholder="Ej. Paracetamol, Ibuprofen, Plan B..." 
+              (input)="onBuscarApi()"
+              autocomplete="off" 
+            />
 
-            <!-- DESPLEGABLE DE SUGERENCIAS DESDE LA API -->
+            <!-- INDICADOR DE BÚSQUEDA EN CURSO -->
+            @if (buscandoApi()) {
+              <div class="position-absolute end-0 top-50 translate-middle-y me-3 mt-2">
+                <span class="spinner-border spinner-border-sm text-primary"></span>
+              </div>
+            }
+
+            <!-- DESPLEGABLE DE SUGERENCIAS -->
             @if (sugerencias().length > 0) {
-              <div
-                class="list-group position-absolute w-100 shadow-lg z-3 mt-1"
-                style="max-height: 200px; overflow-y: auto"
-              >
-                @for (item of sugerencias(); track item.nombre) {
-                  <button
-                    type="button"
-                    class="list-group-item list-group-item-action text-start p-2"
+              <div class="list-group position-absolute w-100 shadow-lg z-3 mt-1" style="max-height: 220px; overflow-y: auto;">
+                @for (item of sugerencias(); track $index) {
+                  <button 
+                    type="button" 
+                    class="list-group-item list-group-item-action p-3 d-flex justify-content-between align-items-center text-start"
                     (click)="seleccionarSugerencia(item)"
                   >
-                    <strong class="text-primary d-block">{{ item.nombre }}</strong>
-                    <small class="text-muted">Sustancia: {{ item.sustanciaActiva }}</small>
+                    <div>
+                      <div class="fw-bold text-primary mb-1">{{ item.nombre }}</div>
+                      <small class="text-muted d-block">Sustancia: {{ item.sustanciaActiva }}</small>
+                    </div>
+                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle">
+                      {{ item.viaAdministracion }}
+                    </span>
                   </button>
                 }
               </div>
             }
-          </div>
 
-          <!-- Insignia de confirmación de API -->
-          @if (medicamentoSeleccionadoApi()) {
-            <div class="alert alert-info py-2 small mb-3">
-              <i class="bi bi-shield-check me-1"></i>
-              Verificado en openFDA:
-              <strong>{{ medicamentoSeleccionadoApi()?.sustanciaActiva }}</strong>
-            </div>
-          }
+            <!-- TARJETA DE INFORMACIÓN DETECTADA (ESTILO NEUTRO / REFERENCIAL) -->
+            @if (medicamentoSeleccionadoApi(); as fdaInfo) {
+              <div class="alert alert-info card-custom p-3 mt-2 border-start border-4 border-info d-flex justify-content-between align-items-start">
+                <div>
+                  <small class="fw-bold text-info-emphasis d-block mb-1">
+                    <i class="bi bi-info-circle-fill me-1"></i> Información de referencia detectada (openFDA)
+                  </small>
+                  <div class="small text-secondary">
+                    <strong>Sustancia:</strong> {{ fdaInfo.sustanciaActiva }}<br />
+                    <strong>Vía:</strong> {{ fdaInfo.viaAdministracion }}
+                  </div>
+                </div>
+                <button 
+                  type="button" 
+                  class="btn-close" 
+                  style="font-size: 0.75rem;" 
+                  (click)="medicamentoSeleccionadoApi.set(null)"
+                  title="Desmarcar selección"
+                ></button>
+              </div>
+            }
+          </div>
 
           <div class="mb-3">
-            <label class="form-label fw-medium">Dosis *</label>
-            <input
-              type="text"
-              formControlName="dosis"
-              class="form-control"
-              placeholder="Ej. 500 mg, 1 tableta"
-            />
+            <label class="form-label fw-bold">Dosis *</label>
+            <input type="text" class="form-control" formControlName="dosis" placeholder="Ej. 500 mg, 1 tableta" />
           </div>
 
-          <div class="row">
-            <div class="col-6 mb-3">
-              <label class="form-label fw-medium">Frecuencia *</label>
+          <div class="row g-2 mb-3">
+            <div class="col-6">
+              <label class="form-label fw-bold">Frecuencia *</label>
               <div class="input-group">
-                <input
-                  type="number"
-                  formControlName="frecuenciaHoras"
-                  class="form-control"
-                  min="1"
-                />
+                <input type="number" class="form-control" formControlName="frecuenciaHoras" min="1" />
                 <span class="input-group-text">hrs</span>
               </div>
             </div>
-
-            <div class="col-6 mb-3">
-              <label class="form-label fw-medium">Duración *</label>
+            <div class="col-6">
+              <label class="form-label fw-bold">Duración *</label>
               <div class="input-group">
-                <input type="number" formControlName="duracionDias" class="form-control" min="1" />
+                <input type="number" class="form-control" formControlName="duracionDias" min="1" />
                 <span class="input-group-text">días</span>
               </div>
             </div>
           </div>
 
           <div class="mb-3">
-            <label class="form-label fw-medium">Instrucciones Adicionales</label>
-            <textarea
-              formControlName="instrucciones"
-              class="form-control"
-              rows="2"
-              placeholder="Ej. Tomar después de comer"
-            ></textarea>
+            <label class="form-label fw-bold">Instrucciones Adicionales</label>
+            <textarea class="form-control" formControlName="instrucciones" rows="2" placeholder="Ej. Tomar después de comer"></textarea>
           </div>
 
-          <button type="submit" class="btn btn-primary w-100 py-2 mt-2">
-            <i class="bi bi-save me-1"></i> Guardar en Catálogo
+          <button type="submit" class="btn btn-primary w-100 py-2" [disabled]="guardando()">
+            @if (guardando()) {
+              <span class="spinner-border spinner-border-sm me-1"></span> Guardando tratamiento...
+            } @else {
+              <i class="bi bi-box-arrow-in-down me-1"></i> Guardar en Catálogo
+            }
           </button>
+
+          <!-- NOTA DISCRETA DE DESLINDE -->
+          <p class="text-muted text-center mt-3 mb-0" style="font-size: 0.75rem;">
+            <i class="bi bi-shield-exclamation me-1"></i>
+            La información obtenida proviene de registros públicos de openFDA y es puramente referencial. No constituye un diagnóstico ni prescripción médica.
+          </p>
         </form>
       </div>
     </div>
 
-    <div class="col-lg-7">
-      <h4 class="fw-bold mb-3 text-dark">Mis Tratamientos Activos</h4>
+    <!-- LISTA DE TRATAMIENTOS ACTIVOS -->
+    <div class="col-12 col-lg-7">
+      <h4 class="fw-bold mb-3">Mis Tratamientos Activos</h4>
 
       @if (medicamentoService.medicamentos().length === 0) {
-        <div class="card card-custom p-4 text-center text-muted">
-          <p class="mb-0">No hay medicamentos registrados.</p>
+        <div class="alert alert-info card-custom p-4 text-center">
+          <i class="bi bi-info-circle fs-2 d-block mb-2 text-info"></i>
+          <p class="mb-0">No tienes medicamentos registrados en tu catálogo.</p>
         </div>
       } @else {
-        <div class="row g-3">
-          @for (item of medicamentoService.medicamentos(); track item.id) {
-            <div class="col-12">
-              <div class="card card-custom p-3 border-start border-4 border-primary">
-                <div class="card-body">
-                  <div class="d-flex justify-content-between align-items-start mb-2">
-                    <div>
-                      <h5 class="fw-bold text-primary mb-0">{{ item.nombre }}</h5>
-                      <small class="text-secondary fw-medium"
-                        >Sustancia activa: {{ item.sustanciaActiva }}</small
-                      >
-                    </div>
-                    <span class="badge bg-primary-subtle text-primary px-3 py-2 rounded-pill">
-                      {{ item.dosis }}
-                    </span>
-                  </div>
+        <div class="d-flex flex-column gap-3">
+          @for (med of medicamentoService.medicamentos(); track med.id) {
+            <div class="card card-custom p-4 border-start border-4 border-primary">
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <div>
+                  <h4 class="fw-bold text-primary mb-1">{{ med.nombre }}</h4>
+                  <p class="text-muted small mb-0">Sustancia activa: {{ med.sustanciaActiva }}</p>
+                </div>
+                <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2 rounded-pill">
+                  {{ med.dosis }}
+                </span>
+              </div>
 
-                  <div class="row my-2 small text-muted">
-                    <div class="col-6">
-                      <i class="bi bi-clock me-1 text-primary"></i> Cada
-                      {{ item.frecuenciaHoras }} horas
-                    </div>
-                    <div class="col-6">
-                      <i class="bi bi-calendar-range me-1 text-primary"></i>
-                      {{ item.duracionDias }} días de tratamiento
-                    </div>
-                  </div>
-
-                  @if (item.instrucciones) {
-                    <p class="card-text small bg-light p-2 rounded mb-2">
-                      <strong>Nota:</strong> "{{ item.instrucciones }}"
-                    </p>
-                  }
-
-                  @if (item.advertenciaFda) {
-                    <div class="accordion border-0 mt-2" [id]="'acc-' + item.id">
-                      <div class="accordion-item border-0 bg-warning-subtle rounded">
-                        <h2 class="accordion-header">
-                          <button
-                            class="accordion-button collapsed bg-transparent text-warning-emphasis py-2 px-3 small fw-bold"
-                            type="button"
-                            data-bs-toggle="collapse"
-                            [attr.data-bs-target]="'#collapse-' + item.id"
-                          >
-                            <i class="bi bi-exclamation-triangle-fill me-2"></i> Advertencia Médica
-                            (openFDA)
-                          </button>
-                        </h2>
-                        <div [id]="'collapse-' + item.id" class="accordion-collapse collapse">
-                          <div class="accordion-body p-3 small text-dark">
-                            {{ item.advertenciaFda }}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  }
+              <div class="row text-muted small my-2">
+                <div class="col-6">
+                  <i class="bi bi-clock me-1"></i>Cada {{ med.frecuenciaHoras }} horas
+                </div>
+                <div class="col-6">
+                  <i class="bi bi-calendar3 me-1"></i>{{ med.duracionDias }} días de tratamiento
                 </div>
               </div>
+
+              @if (med.instrucciones) {
+                <div class="bg-light p-2 rounded small text-secondary my-2">
+                  <strong>Nota:</strong> "{{ med.instrucciones }}"
+                </div>
+              }
+
+              <!-- ADVERTENCIA DESPLEGABLE -->
+              <details class="mt-2">
+                <summary class="btn btn-warning-subtle text-warning-emphasis border border-warning-subtle w-100 text-start fw-bold d-flex justify-content-between align-items-center p-2 rounded">
+                  <span><i class="bi bi-exclamation-triangle-fill text-warning me-2"></i>Advertencia Médica (openFDA)</span>
+                  <i class="bi bi-chevron-down small"></i>
+                </summary>
+                <div class="alert alert-warning border-0 bg-warning-subtle text-dark mb-0 mt-2 p-3 small rounded">
+                  {{ med.advertenciaFda }}
+                </div>
+              </details>
             </div>
           }
         </div>
