@@ -1,11 +1,12 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router'; 
 import { MedicamentoService } from '../../core/services/medicamento.service';
 
 @Component({
   selector: 'app-recordatorios',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink], 
   templateUrl: './recordatorios.html',
   styleUrl: './recordatorios.css'
 })
