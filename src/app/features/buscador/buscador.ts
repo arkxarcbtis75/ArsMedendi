@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MedicamentoApiService, FdaResultado } from '../../core/services/medicamento-api';
 
 @Component({
   selector: 'app-buscador',
@@ -10,18 +11,30 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './buscador.css'
 })
 export class BuscadorComponent {
+  private apiService = inject(MedicamentoApiService);
+
   public termino = '';
-  public resultadoSimulado: any = null;
+  public cargando = signal<boolean>(false);
+  public resultados = signal<FdaResultado[]>([]);
+  public realizoBusqueda = signal<boolean>(false);
 
   buscarInfo(): void {
-    if (!this.termino.trim()) return;
+    const query = this.termino.trim();
+    if (!query) return;
 
-    this.resultadoSimulado = {
-      nombre: this.termino.toUpperCase(),
-      tipo: 'Medicamento / Sustancia Activa',
-      advertencias: 'No exceder la dosis recomendada. Consulte a su médico en caso de embarazo o lactancia.',
-      interacciones: 'Evitar el consumo simultáneo con bebidas alcohólicas.',
-      fuente: 'Consulta oficial simulada (openFDA / COFEPRIS)'
-    };
+    this.cargando.set(true);
+    this.realizoBusqueda.set(true);
+    this.resultados.set([]);
+
+    this.apiService.buscarEnFda(query).subscribe({
+      next: (res) => {
+        this.resultados.set(res);
+        this.cargando.set(false);
+      },
+      error: () => {
+        this.resultados.set([]);
+        this.cargando.set(false);
+      }
+    });
   }
 }

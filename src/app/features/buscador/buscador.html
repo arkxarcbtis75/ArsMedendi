@@ -1,42 +1,74 @@
 <div class="container my-4">
-  <h2 class="fw-bold mb-1"><i class="bi bi-search text-primary me-2"></i>Buscador e Información</h2>
-  <p class="text-muted">
-    Consulta información básica y advertencias sobre medicamentos o sustancias.
-  </p>
+  <h2 class="fw-bold mb-1"><i class="bi bi-search text-primary me-2"></i>Buscador Médico (openFDA)</h2>
+  <p class="text-muted">Consulta la base de datos médica oficial. Ingresa el nombre en inglés o la sustancia activa (ej. <em>Ibuprofen, Amoxicillin, Salbutamol, Aspirin, Omeprazole</em>).</p>
 
+  <!-- CAJA DE BÚSQUEDA -->
   <div class="card card-custom p-4 mb-4">
     <div class="input-group">
-      <input
-        type="text"
-        class="form-control form-control-lg"
-        [(ngModel)]="termino"
-        placeholder="Ej. Ibuprofeno, Paracetamol, Loratadina..."
-        (keyup.enter)="buscarInfo()"
-      />
-      <button class="btn btn-primary btn-lg" (click)="buscarInfo()">
-        <i class="bi bi-search me-1"></i> Buscar
+      <input type="text" class="form-control form-control-lg" [(ngModel)]="termino" 
+             placeholder="Ej. Ibuprofen, Acetaminophen, Salbutamol..." (keyup.enter)="buscarInfo()">
+      <button class="btn btn-primary btn-lg d-flex align-items-center gap-2" (click)="buscarInfo()" [disabled]="cargando()">
+        @if (cargando()) {
+          <span class="spinner-border spinner-border-sm"></span> Buscando...
+        } @else {
+          <i class="bi bi-search"></i> Buscar en API
+        }
       </button>
     </div>
   </div>
 
-  @if (resultadoSimulado) {
-    <div class="card card-custom p-4">
-      <span class="badge bg-primary-subtle text-primary align-self-start mb-2">{{
-        resultadoSimulado.tipo
-      }}</span>
-      <h3 class="fw-bold text-dark">{{ resultadoSimulado.nombre }}</h3>
+  <!-- ESTADO: CARGANDO -->
+  @if (cargando()) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary mb-2" style="width: 3rem; height: 3rem;"></div>
+      <p class="text-muted">Conectando con servidor de openFDA...</p>
+    </div>
+  }
 
-      <div class="alert alert-warning mt-3">
-        <h6 class="fw-bold">
-          <i class="bi bi-exclamation-triangle-fill me-2"></i>Advertencia General
-        </h6>
-        <p class="mb-0 small">{{ resultadoSimulado.advertencias }}</p>
-      </div>
+  <!-- ESTADO: SIN RESULTADOS -->
+  @if (!cargando() && realizoBusqueda() && resultados().length === 0) {
+    <div class="alert alert-warning card-custom p-4 text-center">
+      <i class="bi bi-exclamation-circle fs-1 text-warning d-block mb-2"></i>
+      <h5 class="fw-bold">No se encontraron resultados</h5>
+      <p class="mb-0 text-muted">No se halló información para "<strong>{{ termino }}</strong>" en la base de datos de la FDA. Verifica el nombre científico o la sustancia activa.</p>
+    </div>
+  }
 
-      <p class="mb-1">
-        <strong>Interacciones conocidas:</strong> {{ resultadoSimulado.interacciones }}
-      </p>
-      <small class="text-muted">Fuente: {{ resultadoSimulado.fuente }}</small>
+  <!-- ESTADO: RESULTADOS REALES DE LA API -->
+  @if (!cargando() && resultados().length > 0) {
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h5 class="fw-bold text-dark mb-0">Coincidencias encontradas ({{ resultados().length }})</h5>
+      <span class="badge bg-success-subtle text-success border border-success-subtle">
+        <i class="bi bi-check-circle me-1"></i>Datos oficiales openFDA
+      </span>
+    </div>
+
+    <div class="row g-3">
+      @for (item of resultados(); track $index) {
+        <div class="col-12">
+          <div class="card card-custom p-4 border-start border-4 border-primary">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              <div>
+                <h4 class="fw-bold text-primary mb-1">{{ item.nombre }}</h4>
+                <span class="badge bg-info-subtle text-info-emphasis me-2">
+                  Sustancia: {{ item.sustanciaActiva }}
+                </span>
+                <span class="badge bg-secondary-subtle text-secondary">
+                  Vía: {{ item.viaAdministracion }}
+                </span>
+              </div>
+              @if (item.fabricante) {
+                <small class="text-muted"><i class="bi bi-building me-1"></i>{{ item.fabricante }}</small>
+              }
+            </div>
+
+            <div class="alert alert-warning border-0 bg-warning-subtle text-dark mt-3 mb-0">
+              <h6 class="fw-bold mb-1"><i class="bi bi-shield-exclamation text-warning me-2"></i>Advertencia médica registrada:</h6>
+              <p class="small mb-0" style="max-height: 150px; overflow-y: auto;">{{ item.advertencias }}</p>
+            </div>
+          </div>
+        </div>
+      }
     </div>
   }
 </div>
