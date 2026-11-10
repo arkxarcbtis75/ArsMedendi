@@ -1,0 +1,248 @@
+<div class="container my-4">
+  <!-- BANNER PRINCIPAL DE BIENVENIDA (HERO SECTION) -->
+  <div
+    class="card card-custom border-0 bg-primary text-white p-4 p-md-5 mb-4 shadow-sm position-relative overflow-hidden"
+  >
+    <div class="row align-items-center z-1 position-relative">
+      <div class="col-12 col-lg-8">
+        <span class="badge bg-white text-primary fw-bold px-3 py-2 rounded-pill mb-3">
+          <i class="bi bi-heart-pulse-fill me-1"></i> Asistente Personal Ars Medendi
+        </span>
+        <h1 class="fw-bold display-5 mb-2">Tu salud organizada en un solo lugar</h1>
+        <p class="lead opacity-90 mb-4">
+          Gestiona tus dosis diarias, explora la información oficial de tus medicamentos y da
+          seguimiento a tus hábitos de salud sin complicaciones.
+        </p>
+        <div class="d-flex flex-wrap gap-2">
+          <a routerLink="/recordatorios" class="btn btn-light text-primary fw-bold px-4 py-2">
+            <i class="bi bi-alarm-fill me-1"></i> Ver Tomas de Hoy
+          </a>
+          <a routerLink="/medicamentos" class="btn btn-outline-light fw-bold px-4 py-2">
+            <i class="bi bi-plus-circle me-1"></i> Registrar Medicamento
+          </a>
+        </div>
+      </div>
+      <div class="col-12 col-lg-4 d-none d-lg-block text-center">
+        <i class="bi bi-capsule-capsule text-white opacity-25" style="font-size: 10rem"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- MÉTRICAS Y RESUMEN RÁPIDO DE HOY -->
+  <div class="row g-3 mb-4">
+    <div class="col-12 col-md-4">
+      <div class="card card-custom p-3 border-start border-4 border-primary">
+        <div class="d-flex align-items-center justify-content-between">
+          <div>
+            <div class="text-muted small fw-bold text-uppercase">Tomas pendientes hoy</div>
+            <h3 class="fw-bold mb-0 text-dark">{{ tomasPendientesCount }}</h3>
+          </div>
+          <div class="bg-primary-subtle text-primary p-3 rounded-circle">
+            <i class="bi bi-clock-history fs-3"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-4">
+      <div class="card card-custom p-3 border-start border-4 border-success">
+        <div class="d-flex align-items-center justify-content-between">
+          <div>
+            <div class="text-muted small fw-bold text-uppercase">Tratamientos activos</div>
+            <h3 class="fw-bold mb-0 text-dark">{{ medicamentoService.medicamentos().length }}</h3>
+          </div>
+          <div class="bg-success-subtle text-success p-3 rounded-circle">
+            <i class="bi bi-capsule fs-3"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-4">
+      <div class="card card-custom p-3 border-start border-4 border-info">
+        <div class="d-flex align-items-center justify-content-between">
+          <div>
+            <div class="text-muted small fw-bold text-uppercase">Base de datos médica</div>
+            <h3 class="fw-bold mb-0 text-dark">openFDA</h3>
+          </div>
+          <div class="bg-info-subtle text-info p-3 rounded-circle">
+            <i class="bi bi-shield-check fs-3"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MÓDULOS DE LA APLICACIÓN (ACCESOS DIRECTOS) -->
+  <h4 class="fw-bold text-dark mb-3">
+    <i class="bi bi-grid-fill text-primary me-2"></i>Módulos de la Aplicación
+  </h4>
+
+  <div class="row g-4">
+    <!-- 1. RECORDATORIOS -->
+    <div class="col-12 col-md-6 col-lg-4">
+      <div
+        class="card card-custom h-100 p-4 border-0 shadow-sm d-flex flex-column justify-content-between"
+      >
+        <div>
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <div class="bg-primary-subtle text-primary p-3 rounded-3">
+              <i class="bi bi-alarm-fill fs-2"></i>
+            </div>
+            <span class="badge bg-primary-subtle text-primary border border-primary-subtle"
+              >Diario</span
+            >
+          </div>
+          <h5 class="fw-bold text-dark mb-2">Tomas y Recordatorios</h5>
+          <p class="text-muted small">
+            Confirma tus tomas del día, marca medicamentos ingeridos u omitidos y lleva el control
+            horario exacto.
+          </p>
+        </div>
+        <a routerLink="/recordatorios" class="btn btn-outline-primary w-100 fw-bold mt-3">
+          Abrir Recordatorios <i class="bi bi-arrow-right ms-1"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- 2. MEDICAMENTOS -->
+    <div class="col-12 col-md-6 col-lg-4">
+      <div
+        class="card card-custom h-100 p-4 border-0 shadow-sm d-flex flex-column justify-content-between"
+      >
+        <div>
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <div class="bg-success-subtle text-success p-3 rounded-3">
+              <i class="bi bi-capsule fs-2"></i>
+            </div>
+            <span class="badge bg-success-subtle text-success border border-success-subtle"
+              >Inteligente</span
+            >
+          </div>
+          <h5 class="fw-bold text-dark mb-2">Registro de Tratamientos</h5>
+          <p class="text-muted small">
+            Añade nuevos fármacos. El sistema autocompleta la sustancia activa y muestra las
+            advertencias asociadas.
+          </p>
+        </div>
+        <a routerLink="/medicamentos" class="btn btn-outline-success w-100 fw-bold mt-3">
+          Gestionar Catálogo <i class="bi bi-arrow-right ms-1"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- 3. BUSCADOR MÉDICO -->
+    <div class="col-12 col-md-6 col-lg-4">
+      <div
+        class="card card-custom h-100 p-4 border-0 shadow-sm d-flex flex-column justify-content-between"
+      >
+        <div>
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <div class="bg-info-subtle text-info p-3 rounded-3">
+              <i class="bi bi-search fs-2"></i>
+            </div>
+            <span class="badge bg-info-subtle text-info border border-info-subtle">Fichas FDA</span>
+          </div>
+          <h5 class="fw-bold text-dark mb-2">Guía Informativa</h5>
+          <p class="text-muted small">
+            Consulta para qué sirve cualquier medicamento, sus marcas comerciales registradas y vías
+            de administración.
+          </p>
+        </div>
+        <a routerLink="/buscador" class="btn btn-outline-info w-100 fw-bold mt-3">
+          Buscar Fichas <i class="bi bi-arrow-right ms-1"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- 4. HÁBITOS SALUDABLES -->
+    <div class="col-12 col-md-6 col-lg-4">
+      <div
+        class="card card-custom h-100 p-4 border-0 shadow-sm d-flex flex-column justify-content-between"
+      >
+        <div>
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <div class="bg-warning-subtle text-warning-emphasis p-3 rounded-3">
+              <i class="bi bi-activity fs-2"></i>
+            </div>
+            <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle"
+              >Bienestar</span
+            >
+          </div>
+          <h5 class="fw-bold text-dark mb-2">Hábitos Saludables</h5>
+          <p class="text-muted small">
+            Registra tu consumo de agua, actividad física, horas de sueño y rutinas diarias
+            complementarias.
+          </p>
+        </div>
+        <a routerLink="/habitos" class="btn btn-outline-warning text-dark fw-bold mt-3">
+          Ver Mis Hábitos <i class="bi bi-arrow-right ms-1"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- 5. MAPA Y CENTROS SALUD -->
+    <div class="col-12 col-md-6 col-lg-4">
+      <div
+        class="card card-custom h-100 p-4 border-0 shadow-sm d-flex flex-column justify-content-between"
+      >
+        <div>
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <div class="bg-danger-subtle text-danger p-3 rounded-3">
+              <i class="bi bi-geo-alt-fill fs-2"></i>
+            </div>
+            <span class="badge bg-danger-subtle text-danger border border-danger-subtle"
+              >Ubicación</span
+            >
+          </div>
+          <h5 class="fw-bold text-dark mb-2">Mapa y Farmacias</h5>
+          <p class="text-muted small">
+            Ubica farmacias, hospitales y centros médicos cercanos para emergencias o
+            reabastecimiento.
+          </p>
+        </div>
+        <a routerLink="/mapa" class="btn btn-outline-danger w-100 fw-bold mt-3">
+          Explorar Mapa <i class="bi bi-arrow-right ms-1"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- 6. PERFIL DE USUARIO -->
+    <div class="col-12 col-md-6 col-lg-4">
+      <div
+        class="card card-custom h-100 p-4 border-0 shadow-sm d-flex flex-column justify-content-between"
+      >
+        <div>
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <div class="bg-secondary-subtle text-secondary p-3 rounded-3">
+              <i class="bi bi-person-badge fs-2"></i>
+            </div>
+            <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle"
+              >Usuario</span
+            >
+          </div>
+          <h5 class="fw-bold text-dark mb-2">Mi Perfil Clínico</h5>
+          <p class="text-muted small">
+            Configura tus datos personales, alergias registradas y preferencias de notificación.
+          </p>
+        </div>
+        <a routerLink="/perfil" class="btn btn-outline-secondary w-100 fw-bold mt-3">
+          Ver Mi Perfil <i class="bi bi-arrow-right ms-1"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- AVISO INSTITUCIONAL / LEGAL -->
+  <div class="alert alert-light border card-custom p-4 mt-5 text-center">
+    <div class="d-flex justify-content-center align-items-center gap-2 mb-2 text-muted fw-bold">
+      <i class="bi bi-shield-exclamation text-primary fs-5"></i>
+      <span>Aviso Informativo sobre Ars Medendi</span>
+    </div>
+    <p class="text-muted small mb-0 max-w-750 mx-auto" style="font-size: 0.85rem">
+      Esta plataforma es una herramienta digital de gestión personal y consulta referencial basada
+      en datos públicos de <strong>openFDA</strong>. No emite diagnósticos médicos ni sustituye la
+      prescripción o consulta con un profesional de la salud cualificado.
+    </p>
+  </div>
+</div>

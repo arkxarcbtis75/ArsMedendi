@@ -1,16 +1,34 @@
 import { Routes } from '@angular/router';
-import { RecordatoriosComponent } from './features/recordatorios/recordatorios';
-import { MedicamentosComponent } from './features/medicamentos/medicamentos';
-import { HabitosComponent } from './features/habitos/habitos';
-import { BuscadorComponent } from './features/buscador/buscador';
-import { MapaComponent } from './features/mapa/mapa';
-import { PerfilComponent } from './features/perfil/perfil';
 
 export const routes: Routes = [
-  { path: '', component: RecordatoriosComponent },
-  { path: 'medicamentos', component: MedicamentosComponent },
-  { path: 'habitos', component: HabitosComponent },
-  { path: 'buscador', component: BuscadorComponent },
-  { path: 'mapa', component: MapaComponent },
-  { path: 'perfil', component: PerfilComponent },
+  { path: '', redirectTo: 'inicio', pathMatch: 'full' },
+  { 
+    path: 'inicio', 
+    loadComponent: () => import('./features/inicio/inicio').then(m => m.InicioComponent) 
+  },
+  { 
+    path: 'recordatorios', 
+    loadComponent: () => import('./features/recordatorios/recordatorios').then(m => m.RecordatoriosComponent) 
+  },
+  { 
+    path: 'medicamentos', 
+    loadComponent: () => import('./features/medicamentos/medicamentos').then(m => m.MedicamentosComponent) 
+  },
+  { 
+    path: 'buscador', 
+    loadComponent: () => import('./features/buscador/buscador').then(m => m.BuscadorComponent) 
+  },
+  { 
+    path: 'habitos', 
+    loadComponent: () => import('./features/habitos/habitos').then(m => m.HabitosComponent) 
+  },
+  { 
+    path: 'mapa', 
+    loadComponent: () => import('./features/mapa/mapa').then(m => m.MapaComponent) 
+  },
+  { 
+    path: 'perfil', 
+    loadComponent: () => import('./features/perfil/perfil').then(m => m.PerfilComponent) 
+  },
+  { path: '**', redirectTo: 'inicio' }
 ];
