@@ -1,90 +1,128 @@
 <div class="container my-4">
-  <h2 class="fw-bold mb-1">
-    <i class="bi bi-geo-alt-fill text-danger me-2"></i>Farmacias y Disponibilidad
-  </h2>
-  <p class="text-muted">Ubica farmacias cercanas y reporta la disponibilidad de medicamentos.</p>
-
-  <div class="row g-4">
-    <div class="col-lg-6">
-      <div class="card card-custom p-3">
-        <h4 class="fw-bold text-primary mb-3">Farmacias Cercanas</h4>
-        <div class="list-group">
-          @for (f of farmaciaService.farmacias(); track f.id) {
-            <div class="list-group-item p-3 mb-2 rounded border">
-              <div class="d-flex justify-content-between align-items-start">
-                <h6 class="fw-bold mb-1">{{ f.nombre }}</h6>
-                @if (f.esAutorizadaControlados) {
-                  <span class="badge bg-info-subtle text-info px-2 py-1"
-                    >Medicamento Controlado</span
-                  >
-                }
-              </div>
-              <p class="mb-1 small text-muted"><i class="bi bi-geo me-1"></i>{{ f.direccion }}</p>
-              <a
-                [href]="'https://wa.me/52' + f.telefono"
-                target="_blank"
-                class="btn btn-sm btn-outline-success mt-2"
-              >
-                <i class="bi bi-whatsapp me-1"></i> Consultar disponibilidad
-              </a>
-            </div>
-          }
-        </div>
-      </div>
+  <!-- ENCABEZADO -->
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+    <div>
+      <h2 class="fw-bold mb-1 text-dark">
+        <i class="bi bi-geo-alt-fill text-danger me-2"></i>Mapa de Farmacias y Centros de Salud
+      </h2>
+      <p class="text-muted mb-0">
+        Ubica establecimientos médicos cercanos en tiempo real con Google Maps.
+      </p>
     </div>
 
-    <!-- REPORTES COMUNITARIOS -->
-    <div class="col-lg-6">
-      <div class="card card-custom p-3 mb-4">
-        <h5 class="fw-bold text-dark mb-3">Reportar Disponibilidad (Comunidad)</h5>
-        <div class="mb-2">
-          <select class="form-select" [(ngModel)]="farmaciaSel">
-            <option value="">Selecciona una farmacia</option>
-            @for (f of farmaciaService.farmacias(); track f.id) {
-              <option [value]="f.nombre">{{ f.nombre }}</option>
-            }
-          </select>
-        </div>
-        <div class="mb-2">
-          <input
-            type="text"
-            class="form-control"
-            [(ngModel)]="medicamentoNom"
-            placeholder="Nombre del medicamento buscado"
-          />
-        </div>
-        <div class="mb-3 form-check">
-          <input
-            type="checkbox"
-            class="form-check-input"
-            id="dispCheck"
-            [(ngModel)]="estaDisponible"
-          />
-          <label class="form-check-label" for="dispCheck">¿Sí lo encontraste disponible?</label>
-        </div>
-        <button class="btn btn-primary w-100" (click)="reportar()">Enviar Reporte</button>
-      </div>
-
-      <!-- HISTORIAL DE REPORTES -->
-      <h6 class="fw-bold">Últimos Reportes de Usuarios</h6>
-      @for (rep of farmaciaService.reportes(); track rep.id) {
-        <div
-          class="card card-custom p-2 mb-2 border-start border-4"
-          [class.border-success]="rep.disponible"
-          [class.border-danger]="!rep.disponible"
-        >
-          <div class="d-flex justify-content-between">
-            <strong>{{ rep.medicamentoNombre }}</strong>
-            <small class="text-muted">{{ rep.fechaReporte }}</small>
-          </div>
-          <small class="text-secondary"
-            >{{ rep.farmaciaNombre }} —
-            <span [class.text-success]="rep.disponible" [class.text-danger]="!rep.disponible">
-              {{ rep.disponible ? 'Disponible' : 'Agotado / No había' }}
-            </span>
-          </small>
-        </div>
+    <!-- INDICADOR DE ESTADO GPS -->
+    <div>
+      @if (estadoUbicacion() === 'activa') {
+        <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill">
+          <i class="bi bi-crosshair me-1"></i> Ubicación GPS activa
+        </span>
+      } @else if (estadoUbicacion() === 'detectando') {
+        <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2 rounded-pill">
+          <span class="spinner-border spinner-border-sm me-1"></span> Detectando ubicación...
+        </span>
+      } @else {
+        <button class="btn btn-outline-secondary btn-sm rounded-pill" (click)="detectarUbicacion()">
+          <i class="bi bi-geo-alt me-1"></i> Activar mi ubicación
+        </button>
       }
     </div>
+  </div>
+
+  <!-- CONTROLES DE FILTRADO Y BÚSQUEDA -->
+  <div class="card card-custom p-3 mb-4 shadow-sm">
+    <div class="row g-3 align-items-center">
+      <!-- BOTONES RÁPIDOS -->
+      <div class="col-12 col-lg-7">
+        <div class="d-flex flex-wrap gap-2">
+          <button 
+            type="button" 
+            class="btn btn-sm fw-bold rounded-pill px-3"
+            [class.btn-primary]="busquedaActual() === 'Farmacias'"
+            [class.btn-outline-primary]="busquedaActual() !== 'Farmacias'"
+            (click)="filtrarLugar('Farmacias')"
+          >
+            <i class="bi bi-capsule me-1"></i> Farmacias
+          </button>
+
+          <button 
+            type="button" 
+            class="btn btn-sm fw-bold rounded-pill px-3"
+            [class.btn-primary]="busquedaActual() === 'Farmacias 24 horas'"
+            [class.btn-outline-primary]="busquedaActual() !== 'Farmacias 24 horas'"
+            (click)="filtrarLugar('Farmacias 24 horas')"
+          >
+            <i class="bi bi-clock-fill me-1"></i> Farmacias 24 hrs
+          </button>
+
+          <button 
+            type="button" 
+            class="btn btn-sm fw-bold rounded-pill px-3"
+            [class.btn-danger]="busquedaActual() === 'Hospitales'"
+            [class.btn-outline-danger]="busquedaActual() !== 'Hospitales'"
+            (click)="filtrarLugar('Hospitales')"
+          >
+            <i class="bi bi-hospital-fill me-1"></i> Hospitales
+          </button>
+
+          <button 
+            type="button" 
+            class="btn btn-sm fw-bold rounded-pill px-3"
+            [class.btn-info]="busquedaActual() === 'Clínicas médicas'"
+            [class.btn-outline-info]="busquedaActual() !== 'Clínicas médicas'"
+            (click)="filtrarLugar('Clínicas médicas')"
+          >
+            <i class="bi bi-heart-pulse me-1"></i> Clínicas
+          </button>
+        </div>
+      </div>
+
+      <!-- BUSCADOR ESPECÍFICO -->
+      <div class="col-12 col-lg-5">
+        <div class="input-group input-group-sm">
+          <input 
+            type="text" 
+            class="form-control" 
+            [(ngModel)]="textoBuscador" 
+            placeholder="Ej. Farmacia Guadalajara, Cruz Roja..." 
+            (keyup.enter)="buscarPersonalizado()"
+          />
+          <button class="btn btn-primary fw-bold px-3" (click)="buscarPersonalizado()">
+            <i class="bi bi-search me-1"></i> Buscar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTENEDOR DEL MAPA INTERACTIVO -->
+  <div class="card card-custom border-0 shadow-sm overflow-hidden">
+    <div class="bg-light px-4 py-2 border-bottom d-flex justify-content-between align-items-center">
+      <span class="small fw-bold text-secondary">
+        Mostrando resultados para: <span class="text-primary">{{ busquedaActual() }}</span>
+      </span>
+      <a 
+        [href]="obtenerEnlaceExterno()" 
+        target="_blank" 
+        rel="noopener noreferrer" 
+        class="btn btn-link btn-sm text-decoration-none fw-bold p-0"
+      >
+        Abrir en Google Maps <i class="bi bi-box-arrow-up-right ms-1"></i>
+      </a>
+    </div>
+
+    @if (mapaUrl(); as urlSegura) {
+      <div class="w-100" style="height: 500px;">
+        <iframe
+          [src]="urlSegura"
+          width="100%"
+          height="100%"
+          style="border: 0;"
+          allowfullscreen=""
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          title="Mapa interactivo de Google Maps"
+        ></iframe>
+      </div>
+    }
   </div>
 </div>
