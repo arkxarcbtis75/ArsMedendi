@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Ars Medendi</string>
+    <string name="title_activity_main">Ars Medendi</string>
+    <string name="package_name">com.arsmedendi.app</string>
+    <string name="custom_url_scheme">com.arsmedendi.app</string>
+</resources>
