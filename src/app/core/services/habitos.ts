@@ -125,7 +125,14 @@ export class HabitosService {
   ): void {
     const nuevoPerfil: DatosPerfilBasico = { edad, peso, altura, genero, completado: true };
     this.perfilUsuario.set(nuevoPerfil);
-    localStorage.setItem(this.STORAGE_PERFIL, JSON.stringify(nuevoPerfil));
+
+    try {
+      const previoRaw = localStorage.getItem(this.STORAGE_PERFIL);
+      const previo = previoRaw ? JSON.parse(previoRaw) : {};
+      localStorage.setItem(this.STORAGE_PERFIL, JSON.stringify({ ...previo, ...nuevoPerfil }));
+    } catch {
+      localStorage.setItem(this.STORAGE_PERFIL, JSON.stringify(nuevoPerfil));
+    }
   }
 
   private cargarRegistroDeHoy(): RegistroHabitoDiario {
